@@ -14,10 +14,13 @@ def main():
     for bx in range(0,600,70):
       boxes.append(Box(bx,300))
     boxes.append(Box(500,200))
-      
-
-    while True:
-        pygame.event.pump()
+    done = False
+    while not done:
+        ## LAJ added this to allow the user to close the window down with the X
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+        pygame.event.pump() # LAJ what does this do?
         player.update(boxes)
         
         #Drawing

@@ -44,27 +44,24 @@ class Player(Sprite):
         if self.rect.colliderect(Box.rect) and self.vsp > 0: #check that the bottom of the player is less than the centre of the box (as y is inverse)
             self.ground = True
             self.rect.bottom = Box.rect.top
+        # check for collision on the right
+        if self.rect.colliderect(Box.rect) and self.rect.right > Box.rect.left  : #LAJ change
+            self.hitwallr = True  # LAJ change
+            print("hit wall r")  # LAJ change
+        else:#LAJ change
+            self.hitwallr = False  # LAJ change
+        # TODO check for collision on the left....
 
-        #if self.ground
-        elif self.rect.right > Box.rect.left  and self.rect.top > Box.rect.bottom:
-            self.hitwallr = True
 
     def update(self, list):
-
         key = pygame.key.get_pressed()  # detects if a key is pressed
 
         if key[pygame.K_LEFT]:
             self._hsp = -self.speed
             self.facing_left = True
-
-
-
-
         elif key[pygame.K_RIGHT]:
-
             self._hsp = self.speed - self.friction
             self.facing_left = False
-
         else:
             self.image = self.stand_image
 
@@ -76,6 +73,21 @@ class Player(Sprite):
         if self.ground == False:
             if self.vsp < 10:  # if the player is travelling at less than gravity then gravity will drag the player down
                 self.vsp += self.gravity  # adds gravity to the vertical speed to move downwards
+        #LAJ moved this into this method rather than the move method
+        if self.hitwallr == True:
+            print("hitwall True")
+            #self.speed = 0
+            #self._hsp = 0
+            self._hsp = -self.speed #bounce back
+        else:
+            self.hitwallr = False
+            print("hitwall False")
+            #self.speed = -4
+            #self._hsp = 1
+
+        # TODO check for collision on the left (see above)....
+        #  End LAJ changes
+
         self.move(self._hsp, self.vsp, )
 
         for Box in list:
@@ -85,15 +97,8 @@ class Player(Sprite):
             self.vsp = 0  # when the player is on the ground the vertical speed is set to 0
 
     def move(self, x, y):
-        if self.hitwallr == True:
-            print("hitwall")
-        else:
-
-            self.rect.move_ip([x, y])
-
-
+        self.rect.move_ip([x, y])
         # function to move the player
-
 
 class Box(Sprite):
     def __init__(self, startx, starty):
